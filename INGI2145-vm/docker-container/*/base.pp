@@ -1,0 +1,224 @@
+#--Global Execution params----
+
+Exec {
+          path => "/usr/bin:/usr/sbin:/bin:/usr/local/bin:/usr/local/sbin:/sbin:/bin/sh",
+          user => root,
+		  #logoutput => true,
+}
+
+#--apt-update Triggers-----
+
+exec { "apt-update":
+    command => "sudo apt-get update",
+}
+
+Exec["apt-update"] -> Package <| |> #This means that an apt-update command has to be triggered before any package is installed
+
+#--Hadoop configuration constants----
+
+$hconfig1 = '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+<property>
+  <name>fs.default.name</name>
+  <value>hdfs://localhost:9000</value>
+</property>
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>/usr/local/hadoop/data</value>
+</property>
+</configuration>'
+
+$hconfig2 = '<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+ 
+<configuration>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+</configuration>'
+
+$hconfig3 = '<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+ 
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
+</configuration>'
+
+$hconfig4 = '<?xml version="1.0"?>
+<configuration>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+        <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>localhost:8025</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>localhost:8030</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>localhost:8050</value>
+    </property>
+</configuration>'
+
+#--Miscellaneous Execs-----
+
+#exec {"fix guest addition issues": #presumed to be necessary because of a vagrant bug regarding auto-mounting
+     #command => "ln -s /opt/VBoxGuestAdditions-4.3.10/lib/VBoxGuestAdditions /usr/lib/VBoxGuestAdditions",
+#	 command => 'echo "#!/bin/sh -e" | tee /etc/rc.local && echo "mount -t vboxsf -o rw,uid=1000,gid=1000 vagrant /vagrant" | tee -a /etc/rc.local && echo "exit 0" | tee -a /etc/rc.local',
+#	 refreshonly => true,
+#	 notify => Exec["restart system"]
+#}
+
+#exec {"restart system":
+#     command => "shutdown -r now",
+#	 refreshonly => true,
+#}
+
+#exec {"set hadoop permissions":
+#     command => "chown -R vagrant /usr/local/hadoop/",
+#     user => root,
+ 	 #require => User["hduser"],
+#     subscribe => Exec["install hadoop"],
+#     refreshonly => true,
+#}
+
+exec {"set hadoop env":
+     environment => 'HOME=/root/',
+     command => 'echo "export HADOOP_HOME=/usr/local/hadoop" | tee -a /root/.bashrc && echo "export JAVA_HOME=/usr" | tee -a /root/.bashrc && echo "export HADOOP_OPTS=\"$HADOOP_OPTS -Djava.library.path=/usr/local/hadoop/lib/native\"" | tee -a /root/.bashrc && echo "export HADOOP_COMMON_LIB_NATIVE_DIR=\"/usr/local/hadoop/lib/native\"" | tee -a /root/.bashrc',
+     require => Package["default-jdk"],
+	 user => root,
+     subscribe => Exec["install hadoop"],
+     refreshonly => true,
+}
+
+exec {"configure hadoop  1":
+     command => 'sed -i \'s/${JAVA_HOME}/\/usr/\' /usr/local/hadoop/etc/hadoop/hadoop-env.sh && sed -i \'/^export HADOOP_OPTS/ s/.$/ -Djava.library.path=$HADOOP_PREFIX\/lib"/\' /usr/local/hadoop/etc/hadoop/hadoop-env.sh && echo \'export HADOOP_COMMON_LIB_NATIVE_DIR=${HADOOP_PREFIX}/lib/native\' | tee -a /usr/local/hadoop/etc/hadoop/hadoop-env.sh',
+     subscribe => Exec["install hadoop"],
+     refreshonly => true,
+}
+
+exec {"configure hadoop 2":
+      command => 'echo \'export HADOOP_CONF_LIB_NATIVE_DIR=${HADOOP_PREFIX:-"/lib/native"}\' | tee -a /usr/local/hadoop/etc/hadoop/yarn-env.sh && echo \'export HADOOP_OPTS="-Djava.library.path=$HADOOP_PREFIX/lib"\' | tee -a /usr/local/hadoop/etc/hadoop/yarn-env.sh',
+      subscribe => Exec["install hadoop"],
+      refreshonly => true,
+}
+
+exec {"configure hadoop 3":
+      command => "echo \'${hconfig1}\' | tee /usr/local/hadoop/etc/hadoop/core-site.xml && echo '${hconfig2}' | tee /usr/local/hadoop/etc/hadoop/mapred-site.xml && echo '${hconfig3}' | tee /usr/local/hadoop/etc/hadoop/hdfs-site.xml && echo '${hconfig4}' | tee /usr/local/hadoop/etc/hadoop/yarn-site.xml",
+      subscribe => Exec["install hadoop"],
+      refreshonly => true,
+}
+
+exec {"configure spark logs":
+      command => "sed -i 's/INFO, console/WARN, console/g' /usr/local/spark/conf/log4j.properties.template && mv /usr/local/spark/conf/log4j.properties.template /usr/local/spark/conf/log4j.properties",
+      subscribe => Exec["install spark"],
+      refreshonly => true,
+}
+
+exec {"install boto":
+      command => "pip install boto",
+      subscribe => Package["python-pip"],
+      refreshonly => true,
+}
+
+#--Disabling IPv6 (for Hadoop)---
+
+exec {"disable ipv6":
+     command => "echo 'net.ipv6.conf.all.disable_ipv6 = 1' | tee -a /etc/sysctl.conf && echo 'net.ipv6.conf.default.disable_ipv6 = 1' | tee -a /etc/sysctl.conf && echo 'net.ipv6.conf.lo.disable_ipv6 = 1' | tee -a /etc/sysctl.conf",
+      subscribe => Exec["install hadoop"],
+      refreshonly => true,
+}
+
+#--Users and Groups---------------
+
+#vagrant already preconfigs a user called 'vagrant'. However, you can add your own users as shown below. Refer to the puppet type reference documentation (docs.puppetlabs.com/references/latest/type.html) for additional details.
+#user { "student":
+#     name => "student",
+#     ensure => present,
+#     groups => ["sudo"]	 
+#}
+
+#--Hadoop Installation-----------
+ 
+exec { "install hadoop":
+    command => "wget http://archive.apache.org/dist/hadoop/core/hadoop-2.4.0/hadoop-2.4.0.tar.gz && tar -xzf hadoop-2.4.0.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
+	#command => "wget http://blog.woopi.org/wordpress/files/hadoop-2.4.0-64bit.tar.gz && tar -xzf hadoop-2.4.0-64bit.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
+    creates => "/usr/local/hadoop",
+    require => Package["default-jdk"],
+}
+
+#--Kafka Installation------------
+
+exec { "install kafka":
+    command => "wget http://apache.cu.be/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && ln -s kafka_2.8.0-0.8.1.1/ kafka",
+    creates => "/usr/local/kafka",
+}
+
+#--Apache Spark Installation-----
+
+exec { "install spark":
+    command => "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz && tar -xzf spark-1.1.0-bin-hadoop2.4.tgz && mv spark-1.1.0-bin-hadoop2.4/ /usr/local && cd /usr/local && ln -s spark-1.1.0-bin-hadoop2.4/ spark",
+    creates => "/usr/local/spark",
+}
+
+#--Packages----
+
+#package { "ubuntu-desktop":
+#  ensure => present,
+#  notify => Exec["fix guest addition issues"],
+#  install_options => ['--no-install-recommends'],
+#}
+
+package { "git":
+   ensure => present,
+}
+
+package { "ssh":
+   ensure => present,
+}
+
+package { "eclipse":
+   ensure => present,
+}
+
+package { "maven2":
+   ensure => present,
+   require => Package["default-jdk"],
+}
+
+package { "python-pip":
+   ensure => present,
+}
+
+package { "awscli":
+   ensure => present
+}
+
+package { ["nodejs", "npm"]:
+   ensure => present
+}
+
+package { "default-jdk":
+   ensure => present,
+}
+
+package { "memcached":
+   ensure => present
+}
+
+package { "mongodb":
+   ensure => present
+}
