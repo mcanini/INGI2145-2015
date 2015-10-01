@@ -1,4 +1,4 @@
-#--Global Execution params----
+#-Global Execution params----
 
 Exec {
           path => "/usr/bin:/usr/sbin:/bin:/usr/local/bin:/usr/local/sbin:/sbin:/bin/sh",
@@ -158,12 +158,15 @@ exec { "install hadoop":
 	#command => "wget http://blog.woopi.org/wordpress/files/hadoop-2.4.0-64bit.tar.gz && tar -xzf hadoop-2.4.0-64bit.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
     creates => "/usr/local/hadoop",
     require => Package["default-jdk"],
+    timeout => 600,
+    tries => 3,
+    try_sleep => 60,
 }
 
 #--Kafka Installation------------
-
+#Change the permissions to the /usr/local/kafka?
 exec { "install kafka":
-    command => "wget http://apache.cu.be/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && ln -s kafka_2.8.0-0.8.1.1/ kafka",
+    command => "wget http://apache.cu.be/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && sudo mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && sudo ln -s kafka_2.8.0-0.8.1.1/ kafka",
     creates => "/usr/local/kafka",
 }
 
