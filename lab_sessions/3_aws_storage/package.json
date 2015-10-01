@@ -1,0 +1,10 @@
+{
+  "name": "Lab2-node",
+  "description": "Lab 2 exercises in Node.js",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "aws-sdk": "2.x",
+    "mc": "*"
+  }
+}
