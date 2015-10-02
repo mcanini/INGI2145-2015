@@ -7,7 +7,7 @@ var http = require('http');
 var AWS = require('aws-sdk'); // Docs at http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/frames.html
 
 // Import dynamoDB commons
-var util = require('./lab2-commons')
+var util = require('./lab3-commons')
 
 // memached node api
 var mc = require('mc');
