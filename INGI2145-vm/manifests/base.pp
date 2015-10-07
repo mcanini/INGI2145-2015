@@ -9,7 +9,7 @@ Exec {
 #--apt-update Triggers-----
 
 exec { "apt-update":
-    command => "sudo apt-get update",
+    command => "sudo apt-get update -y",
 }
 
 Exec["apt-update"] -> Package <| |> #This means that an apt-update command has to be triggered before any package is installed
@@ -79,13 +79,14 @@ exec {"fix guest addition issues": #presumed to be necessary because of a vagran
      #command => "ln -s /opt/VBoxGuestAdditions-4.3.10/lib/VBoxGuestAdditions /usr/lib/VBoxGuestAdditions",
 	 command => 'echo "#!/bin/sh -e" | tee /etc/rc.local && echo "mount -t vboxsf -o rw,uid=1000,gid=1000 vagrant /vagrant" | tee -a /etc/rc.local && echo "exit 0" | tee -a /etc/rc.local',
 	 refreshonly => true,
-	 notify => Exec["restart system"]
+	 #notify => Exec["restart system"]
 }
 
-exec {"restart system":
-     command => "shutdown -r now",
-	 refreshonly => true,
-}
+
+#exec {"restart system":
+#     command => "shutdown -r now",
+#	 refreshonly => true,
+#}
 
 exec {"set hadoop permissions":
      command => "chown -R vagrant /usr/local/hadoop/",
@@ -121,6 +122,16 @@ exec {"configure hadoop 3":
       subscribe => Exec["install hadoop"],
       refreshonly => true,
 }
+#exec {"configure hadoop 4" :
+#      command => "sudo rm -rf /usr/local/hadoop/data && /usr/local/hadoop/bin/hadoop namenode -format",
+#      subscribe => Exec["install hadoop"],
+#      refreshonly => true,
+#}
+
+exec {"configure localhost ssh":
+      command => "cat /dev/zero | ssh-keygen -q -N \"\" && cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys && chmod og-wx /home/vagrant/.ssh/authorized_keys",
+      user => vagrant,
+}
 
 exec {"configure spark logs":
       command => "sed -i 's/INFO, console/WARN, console/g' /usr/local/spark/conf/log4j.properties.template && mv /usr/local/spark/conf/log4j.properties.template /usr/local/spark/conf/log4j.properties",
@@ -154,7 +165,7 @@ exec {"disable ipv6":
 #--Hadoop Installation-----------
  
 exec { "install hadoop":
-    command => "wget http://archive.apache.org/dist/hadoop/core/hadoop-2.4.0/hadoop-2.4.0.tar.gz && tar -xzf hadoop-2.4.0.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
+    command => "wget http://apache.belnet.be/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz && tar -xzf hadoop-2.6.0.tar.gz && mv hadoop-2.6.0/ /usr/local && cd /usr/local && ln -s hadoop-2.6.0/ hadoop",
 	#command => "wget http://blog.woopi.org/wordpress/files/hadoop-2.4.0-64bit.tar.gz && tar -xzf hadoop-2.4.0-64bit.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
     creates => "/usr/local/hadoop",
     require => Package["default-jdk"],
@@ -173,13 +184,13 @@ exec { "install kafka":
 #--Apache Spark Installation-----
 
 exec { "install spark":
-    command => "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz && tar -xzf spark-1.1.0-bin-hadoop2.4.tgz && mv spark-1.1.0-bin-hadoop2.4/ /usr/local && cd /usr/local && ln -s spark-1.1.0-bin-hadoop2.4/ spark",
+    command => "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.4.1-bin-hadoop2.6.tgz && tar -xzf spark-1.4.1-bin-hadoop2.6.tgz && mv spark-1.4.1-bin-hadoop2.6/ /usr/local && cd /usr/local && ln -s spark-1.4.1-bin-hadoop2.6/ spark",
     creates => "/usr/local/spark",
 }
 
 #--Packages----
 
-package { "ubuntu-desktop":
+package { "lubuntu-desktop":
   ensure => present,
   notify => Exec["fix guest addition issues"],
   install_options => ['--no-install-recommends'],
