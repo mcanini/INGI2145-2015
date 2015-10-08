@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'idea'        // `gradle idea` to generate idea project file
+apply plugin: 'eclipse'     // `gradle eclipse` to generate eclipse project file
+apply plugin: 'application' // `gradle run` to run from gradle
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+mainClassName = 'be_uclouvain_ingi2145_p1.PoIDriver'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest.attributes('Main-Class': mainClassName)
+}
+
+dependencies {
+    compile 'org.apache.hadoop:hadoop-client:2.6.0'
+}
+
+sourceSets {
+    main.java.srcDir 'src'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
+run {
+    if ( project.hasProperty("appArgs") ) {
+        args Eval.me(appArgs)
+    }
+}

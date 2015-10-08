@@ -1,0 +1,5 @@
+# Here are some test configurations for input parameters that you can 
+# use to test you algorithm
+./run.sh composite in out 1 5 1 
+./run.sh composite in out 1 15 4
+./run.sh composite in out 1 9 5
