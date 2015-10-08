@@ -14,7 +14,7 @@ from boto.s3.key import Key
 # export AWS_SECRET_ACCESS_KEY='SECRET'
 
 # Tutorial params
-bucket_name = 'mybucket420932840932843209'
+bucket_name = 'ingi2145-thanh'
 dl_path = "~/temp/files/"
 
 #Step 1 -- Connect to Amazon S3
