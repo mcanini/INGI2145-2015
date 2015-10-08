@@ -165,7 +165,7 @@ exec {"disable ipv6":
 #--Hadoop Installation-----------
  
 exec { "install hadoop":
-    command => "wget http://apache.belnet.be/hadoop/common/hadoop-2.6.0/hadoop-2.6.0.tar.gz && tar -xzf hadoop-2.6.0.tar.gz && mv hadoop-2.6.0/ /usr/local && cd /usr/local && ln -s hadoop-2.6.0/ hadoop",
+    command => "wget http://perso.uclouvain.be/marco.canini/ingi2145/hadoop-2.6.0.tar.gz && tar -xzf hadoop-2.6.0.tar.gz && mv hadoop-2.6.0/ /usr/local && cd /usr/local && ln -s hadoop-2.6.0/ hadoop",
 	#command => "wget http://blog.woopi.org/wordpress/files/hadoop-2.4.0-64bit.tar.gz && tar -xzf hadoop-2.4.0-64bit.tar.gz && mv hadoop-2.4.0/ /usr/local && cd /usr/local && ln -s hadoop-2.4.0/ hadoop",
     creates => "/usr/local/hadoop",
     require => Package["default-jdk"],
@@ -177,7 +177,7 @@ exec { "install hadoop":
 #--Kafka Installation------------
 #Change the permissions to the /usr/local/kafka?
 exec { "install kafka":
-    command => "wget http://apache.cu.be/kafka/0.8.1.1/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && sudo mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && sudo ln -s kafka_2.8.0-0.8.1.1/ kafka",
+    command => "wget http://perso.uclouvain.be/marco.canini/ingi2145/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && sudo mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && sudo ln -s kafka_2.8.0-0.8.1.1/ kafka",
     creates => "/usr/local/kafka",
     timeout => 600,
     tries => 3,
@@ -187,7 +187,7 @@ exec { "install kafka":
 #--Apache Spark Installation-----
 
 exec { "install spark":
-    command => "wget http://d3kbcqa49mib13.cloudfront.net/spark-1.4.1-bin-hadoop2.6.tgz && tar -xzf spark-1.4.1-bin-hadoop2.6.tgz && mv spark-1.4.1-bin-hadoop2.6/ /usr/local && cd /usr/local && ln -s spark-1.4.1-bin-hadoop2.6/ spark",
+    command => "wget http://perso.uclouvain.be/marco.canini/ingi2145/spark-1.4.1-bin-hadoop2.6.tgz && tar -xzf spark-1.4.1-bin-hadoop2.6.tgz && mv spark-1.4.1-bin-hadoop2.6/ /usr/local && cd /usr/local && ln -s spark-1.4.1-bin-hadoop2.6/ spark",
     creates => "/usr/local/spark",
     timeout => 600,
     tries => 3,
