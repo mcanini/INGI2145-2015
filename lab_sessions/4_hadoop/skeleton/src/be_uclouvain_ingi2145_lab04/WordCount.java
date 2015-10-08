@@ -57,6 +57,8 @@ public class WordCount extends Configured implements Tool
         deleteDir(outputDir);
 
         Job job = Job.getInstance(getConf());
+        job.setJarByClass(WordCount.class);
+
 
         // TODO: implement the driver (configure the job)
 
