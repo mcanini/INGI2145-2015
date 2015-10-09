@@ -6,7 +6,7 @@ apply plugin: 'application' // `gradle run` to run from gradle
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-mainClassName = 'be_uclouvain_ingi2145_lab03.WordCount'
+mainClassName = 'be_uclouvain_ingi2145_lab04.WordCount'
 
 repositories {
     mavenCentral()
