@@ -1,0 +1,19 @@
+# build artifacts
+build
+out
+*.log
+
+# run artifacts
+output
+interm
+
+# idea project files
+.idea
+*.iml
+*.ipr
+*.iws
+
+# eclipse project files
+.classpath
+.project
+.settings
