@@ -17,7 +17,7 @@ jar {
 }
 
 dependencies {
-    compile 'org.apache.hadoop:hadoop-client:2.4.1'
+    compile 'org.apache.hadoop:hadoop-client:2.6.0'
 }
 
 sourceSets {
