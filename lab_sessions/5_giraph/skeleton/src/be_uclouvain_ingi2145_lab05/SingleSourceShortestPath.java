@@ -20,7 +20,7 @@ import org.apache.log4j.Level;
     name = "Shortest paths",
     description = "Finds all shortest paths from a selected vertex"
 )
-public class SimpleShortestPathsComputation extends BasicComputation<
+public class SingleSourceShortestPath extends BasicComputation<
     LongWritable, DoubleWritable, FloatWritable, DoubleWritable>{
 
   private Configuration conf = new Configuration();
