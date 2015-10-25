@@ -17,4 +17,4 @@ $HADOOP_HOME/sbin/start-dfs.sh
 $HADOOP_HOME/sbin/start-yarn.sh
 
 $HADOOP_HOME/bin/hdfs dfs -mkdir /input
-$HADOOP_HOME/bin/hdfs dfs -copyFromLocal /labs/5_giraph/Skeleton/input/tiny_graph.txt /input/tiny_graph.txt
+$HADOOP_HOME/bin/hdfs dfs -copyFromLocal /labs/5_giraph/skeleton/input/tiny_graph.txt /input/tiny_graph.txt
