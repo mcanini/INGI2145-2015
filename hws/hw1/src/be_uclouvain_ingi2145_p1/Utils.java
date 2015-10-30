@@ -48,6 +48,7 @@ public class Utils
      */
     static boolean checkResults(FileSystem fs, Path path) throws IOException {
         boolean check = false;
+        FileSystem fs = FileSystem.get(URI.create(path), PoIDriver.GET.getConf());
         if (fs.exists(path)) {
             FileStatus[] ls = fs.listStatus(path);
             String line = new String();
