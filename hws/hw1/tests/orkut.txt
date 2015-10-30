@@ -14,7 +14,7 @@ Output:
 
 Test case 2:
 srcID = 26689
-dstID = 7100000
+dstID = 710000
 maxHops = 5
 numOfReducers = 1
 Output:
