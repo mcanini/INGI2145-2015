@@ -46,9 +46,9 @@ public class Utils
     /**
      * Given an output folder, check if a connection node has been found for the Person of Interest
      */
-    static boolean checkResults(FileSystem fs, Path path) throws IOException {
+    static boolean checkResults(FileSystem filesys, Path path) throws IOException {
         boolean check = false;
-        FileSystem fs = FileSystem.get(URI.create(path), PoIDriver.GET.getConf());
+        FileSystem fs = FileSystem.get(path.toUri(),PoIDriver.GET.getConf());
         if (fs.exists(path)) {
             FileStatus[] ls = fs.listStatus(path);
             String line = new String();
