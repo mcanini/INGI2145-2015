@@ -24,16 +24,6 @@ Output:
 
 Test case 3:
 srcID = 1
-dstID = 5
-maxHops = 3
-numOfReducers = 1
-Output:
-0 [2,6]
-
-###########################################################################################
-
-Test case 4:
-srcID = 1
 dstID = 200000
 maxHops = 3
 numOfReducers = 1
@@ -42,7 +32,7 @@ Output:
 
 ###########################################################################################
 
-Test case 5:
+Test case 4:
 srcID = 10000
 dstID = 2000000
 maxHops = 4
