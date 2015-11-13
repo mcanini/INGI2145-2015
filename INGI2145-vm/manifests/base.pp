@@ -96,6 +96,14 @@ exec {"set hadoop permissions":
      refreshonly => true,
 }
 
+exec {"set kafka permissions":
+     command => "chown -R vagrant /usr/local/kafka/“,
+     user => root,
+ 	 #require => User["hduser"],
+     subscribe => Exec["install kafka”],
+     refreshonly => true,
+}
+
 exec {"set hadoop env":
      environment => 'HOME=/home/vagrant',
      command => 'echo "export HADOOP_HOME=/usr/local/hadoop" | tee -a .bashrc && echo "export JAVA_HOME=/usr" | tee -a .bashrc && echo "export HADOOP_OPTS=\"$HADOOP_OPTS -Djava.library.path=/usr/local/hadoop/lib/native\"" | tee -a .bashrc && echo "export HADOOP_COMMON_LIB_NATIVE_DIR=\"/usr/local/hadoop/lib/native\"" | tee -a .bashrc',
