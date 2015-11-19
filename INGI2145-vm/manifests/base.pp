@@ -97,10 +97,10 @@ exec {"set hadoop permissions":
 }
 
 exec {"set kafka permissions":
-     command => "chown -R vagrant /usr/local/kafka/“,
+     command => "chown -R vagrant /usr/local/kafka/",
      user => root,
  	 #require => User["hduser"],
-     subscribe => Exec["install kafka”],
+     subscribe => Exec["install kafka"],
      refreshonly => true,
 }
 
@@ -139,11 +139,18 @@ exec {"configure hadoop 3":
 exec {"configure localhost ssh":
       command => "cat /dev/zero | ssh-keygen -q -N \"\" && cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys && chmod og-wx /home/vagrant/.ssh/authorized_keys",
       user => vagrant,
+      refreshonly => true,
 }
 
 exec {"configure spark logs":
       command => "sed -i 's/INFO, console/WARN, console/g' /usr/local/spark/conf/log4j.properties.template && mv /usr/local/spark/conf/log4j.properties.template /usr/local/spark/conf/log4j.properties",
       subscribe => Exec["install spark"],
+      refreshonly => true,
+}
+
+exec {"configure cassandra":
+      command => 'sudo sed -i \'s/MAX_HEAP_SIZE=\"\${max_heap_size_in_mb}M\"/MAX_HEAP_SIZE=\"256M\"/g\' /etc/cassandra/cassandra-env.sh',
+      subscribe => Exec["install cassandra"],
       refreshonly => true,
 }
 
@@ -202,6 +209,16 @@ exec { "install spark":
     try_sleep => 60,
 }
 
+#--Cassandra Installation-----
+
+exec { "install cassandra":
+    command => 'echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list && curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add - && sudo apt-get update && sudo apt-get install dsc20=2.0.11-1 cassandra=2.0.11 -y && sudo service cassandra stop && sudo rm -rf /var/lib/cassandra/data/system/* && sudo service cassandra start',
+    creates => "/etc/cassandra",
+    timeout => 600,
+    tries => 3,
+    try_sleep => 60,
+}
+
 #--Packages----
 
 package { "lubuntu-desktop":
@@ -248,5 +265,7 @@ package { "memcached":
 }
 
 package { "mongodb":
-   ensure => present
+   ensure => purged
+   #ensure => absent #If purged does not work
 }
+
