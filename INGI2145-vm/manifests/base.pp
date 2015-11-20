@@ -216,6 +216,7 @@ exec { "install spark":
 exec { "install cassandra":
     command => 'echo "deb http://debian.datastax.com/community stable main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list && curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add - && sudo apt-get update && sudo apt-get install dsc20=2.0.11-1 cassandra=2.0.11 -y && sudo service cassandra stop && sudo rm -rf /var/lib/cassandra/data/system/* && sudo service cassandra start',
     creates => "/etc/cassandra",
+    require => Package["default-jdk"],
     timeout => 600,
     tries => 3,
     try_sleep => 60,
