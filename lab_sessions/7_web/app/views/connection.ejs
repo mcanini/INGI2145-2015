@@ -1,0 +1,49 @@
+<header>
+	<div class="wrapper">
+        <a ng-click="titleCLic()" href="#">
+		  <img src="/gfx/logo.png">
+		  <span>Twitter Clone</span>
+        </a>
+	</div>
+</header>
+<div id="content">
+	<div class="wrapper">
+		<div class="container">
+			<form role="form" novalidate>
+				<div class="form-connection">
+					<h2 class="form-signin-heading">Please sign in</h2>
+					<div>
+						<label for="username" class="sr-only">User Name</label>
+						<input ng-change="testUsername()"  ng-model="username" type="text" class="form-control" placeholder="User Name" required="">
+						<div ng-show="error_username"  class="help-block with-errors">Username between 4 and 20 characters (A to Z, 1 to 9, _ allowed)</div>
+					</div>
+					<div>
+						<label ng-show="isSubscribing" for="fullname" class="sr-only">User Name</label>
+						<input ng-change="testFullname()"  ng-show="isSubscribing" ng-model="fullname" type="text" class="form-control" placeholder="Full Name" required="" >
+						<div ng-show="error_fullname"  class="help-block with-errors">Fullname between 4 and 20 characters </div>
+					</div>
+					<div>
+						<label for="pass" class="sr-only">Password</label>
+						<input ng-change="testPassword()" type="password" ng-model="pass" class="form-control" placeholder="Password" required="">
+						<div ng-show="error_pass"  class="help-block with-errors">Password between 4 and 20 characters </div>
+					</div>
+					<div>
+						<input ng-change="testPasswordC()"  ng-show="isSubscribing" type="password" ng-model="passC" class="form-control" placeholder="Confirm" required="">
+						<div ng-show="error_passC" class="help-block with-errors">Password don't match</div>
+					</div>
+					<input ng-hide="isSubscribing" ng-click="signin()"  class="btn btn-lg btn-primary btn-block" type="submit" value="Sign in" />
+					<input ng-show="isSubscribing" ng-click="register()" ng-disabled="incomplete" class="btn btn-lg btn-primary btn-block" type="submit" value="Register me !" />
+					<br>
+					<div ng-show="justSubscribed" class="alert alert-success" role="alert">You have been subscribed, you can sign in !</div>
+					<div ng-show="error_server_happened" class="alert alert-warning-alt" role="alert" > {{error_server}} </div>
+					<a ng-hide="justSubscribed || isSubscribing"  ng-click="registration()" style="cursor:pointer;"> Not Subscribed ? </a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="wrapper">
+		A Twitter Clone
+	</div>
+</footer>
