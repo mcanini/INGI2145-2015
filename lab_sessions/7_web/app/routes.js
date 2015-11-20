@@ -45,7 +45,18 @@ router.get('/logout', function(req, res) {
     });
 });
 
+router.get('/isConnected', function(req, res) {
+    if (req.session.user != null) {
+        res.status(200).send( "true").end();
+    } else {
+        res.status(200).send( "false").end();
+    }
+});
 
 ////////////////////////////////////////////////////////////////////////////////
+
+router.get('/home', function(req, res) {
+     res.render('home', {});
+});
 
 module.exports = router;

@@ -4,8 +4,6 @@ var app = require('../app');
 
 var collectionName = "Users";
 var getUser = "SELECT * FROM twitter.Users WHERE username=?";
-var insertUser = "INSERT INTO twitter.Users (username, name, pass) "
-            + "VALUES(?, ?, ?);";
 
 /* login validation methods */
 
@@ -22,19 +20,7 @@ exports.manualLogin = function(user, pass, callback)
 /* record insertion, update & deletion methods */
 exports.addNewAccount = function(newData, callback)
 {
-    app.db.execute(getUser, [newData.username], function(e, result){
-        if (result.rows.length > 0){
-            callback('username-taken');
-        }
-        else{
-            saltAndHash(newData.pass, function(hash){
-                newData.pass = hash;
-                // append date stamp when record was created //
-                newData.date = moment().format('MMMM Do YYYY, h:mm:ss a');
-                app.db.execute(insertUser, [newData.username, '', newData.pass], callback);
-            });
-        }
-    });
+    
 }
 
 /* private encryption & validation methods */
@@ -66,4 +52,3 @@ var validatePassword = function(plainPass, hashedPass, callback)
 	var validHash = salt + md5(plainPass + salt);
 	callback(null, hashedPass === validHash);
 }
-
