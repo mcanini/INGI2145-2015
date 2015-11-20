@@ -194,6 +194,7 @@ exec { "install hadoop":
 exec { "install kafka":
     command => "wget http://perso.uclouvain.be/marco.canini/ingi2145/kafka_2.8.0-0.8.1.1.tgz && tar -xzf kafka_2.8.0-0.8.1.1.tgz && sudo mv kafka_2.8.0-0.8.1.1/ /usr/local && cd /usr/local && sudo ln -s kafka_2.8.0-0.8.1.1/ kafka",
     creates => "/usr/local/kafka",
+    require => Package["default-jdk"],
     timeout => 600,
     tries => 3,
     try_sleep => 60,
@@ -204,6 +205,7 @@ exec { "install kafka":
 exec { "install spark":
     command => "wget http://perso.uclouvain.be/marco.canini/ingi2145/spark-1.4.1-bin-hadoop2.6.tgz && tar -xzf spark-1.4.1-bin-hadoop2.6.tgz && mv spark-1.4.1-bin-hadoop2.6/ /usr/local && cd /usr/local && ln -s spark-1.4.1-bin-hadoop2.6/ spark",
     creates => "/usr/local/spark",
+    require => Package["default-jdk"],
     timeout => 600,
     tries => 3,
     try_sleep => 60,
