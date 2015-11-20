@@ -1,0 +1,56 @@
+<header>
+	<div class="wrapper">
+        <a ng-click="titleCLic()" href="#">
+		  <img src="/gfx/logo.png">
+		  <span>Twitter Clone</span>
+        </a>
+		<form>
+			<input ng-click="logout()" type="submit" id="btnLogOut" value="Log Out">
+		</form>
+	</div>
+</header>
+<div id="content">
+	<div class="wrapper">	
+	<div class="panel right">
+		<h1>Create a Tweet</h1>
+		<p>
+			<form id="newTweet" novalidate>
+				<textarea name="text" my-maxLength="140" class="ribbitText" ng-model="tweet_content"></textarea>
+				<div>{{140 - tweet_content.length}} chars remaining (min 5 chars)</div>
+				<div ng-hide="uploading">
+			        <button id="select-file" class="btn-convert">Select an image (optional)</button>
+			        <input id="file-input" type="file" class="file-input" name="files[]">
+			    </div>
+			    <meter class="progressbar" ng-show="uploading" value="0.0"></meter>
+				<input ng-disabled="tweetIncomplete || !uploadComplete" type="submit" value="Tweet!" ng-click="send_tweet()" ng-enabled="sendTweetButton">
+			</form>
+			<div style="margin-left: 25px;" ng-show="tweetSent" class="alert alert-success" role="alert">Tweet sent !</div>
+			<div style="margin-left: 27px;" ng-show="uploadError" class="alert alert-warning-alt" role="alert" >An error happened: {{errorMessage}}</div>
+		</p>
+	</div>
+	
+	<div id="ribbits" class="panel left">
+		<h1>Your feed ({{feedTitle}})</h1>
+		<div infinite-scroll='getTweets()'>
+		    <div class="ribbitWrapper" ng-repeat="tweet in tweets">
+		    	<img class="avatar" src="/gfx/user2.png">
+		    	<span class="name">
+	                <a ng-click="profile(tweet.author)">
+	                    {{tweet.author}}
+	                </a>
+	            </span>
+	            <span class="time">{{tweet.display_time}}</span>
+		    	<p>{{tweet.body}}</p>
+		    	<img ng-if="tweet.image" alt="tweet image" style="width:300px;" ng-src="{{tweet.image !=null && 'http://s3-us-west-2.amazonaws.com/ingi2145-bvanmelle/img/' + tweet.image }}"/>
+		    </div>
+		</div>
+		<div ng-show="fullLoaded" class="ribbitWrapper" style="text-align: center; font-weight: bold;color: #58B84E;">
+			All the tweets had been loaded.
+		</div>
+	</div>
+</div>
+<footer>
+	<p>
+		A Twitter Clone
+	</p>
+</footer>
