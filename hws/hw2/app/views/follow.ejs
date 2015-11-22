@@ -1,0 +1,13 @@
+<div id="ribbits" class="panel left">
+	<h1><%= title %></h1>
+    <% for(var i=0; i < follow.length; i++) { %>
+	    <div class="ribbitWrapper">
+	    	<img class="avatar" src="/gfx/user2.png">
+	    	<span class="name">
+                <a href="/usr/<%= follow[i] %>">
+                    <%= follow[i] %>
+                </a>
+            </span>
+	    </div>
+    <% } %>
+</div>

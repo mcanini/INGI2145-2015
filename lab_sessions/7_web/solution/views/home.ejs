@@ -1,0 +1,31 @@
+<header>
+	<div class="wrapper">
+        <a ng-click="titleCLic()" href="#">
+		  <img src="/gfx/logo.png">
+		  <span>Twitter Clone</span>
+        </a>
+		<form>
+			<input ng-click="logout()" type="submit" id="btnLogOut" value="Log Out">
+		</form>
+	</div>
+</header>
+<div id="content">
+	<div class="wrapper">	
+	<div class="panel right">
+		<h1>Create a Tweet</h1>
+		<p>
+			<form id="newTweet" novalidate>
+				<textarea name="text" my-maxLength="140" class="ribbitText"></textarea>
+			</form>
+		</p>
+	</div>
+	
+	<div id="ribbits" class="panel left">
+		<h1>Welcome to Twitter Clone</h1>
+	</div>
+</div>
+<footer>
+	<p>
+		A Twitter Clone
+	</p>
+</footer>

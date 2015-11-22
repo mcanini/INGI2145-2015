@@ -1,0 +1,69 @@
+<header>
+  <div class="wrapper">
+        <a ng-click="titleCLic()" href="#">
+      <img src="/gfx/logo.png">
+      <span>Twitter Clone</span>
+        </a>
+    <form>
+      <input ng-click="logout()" type="submit" id="btnLogOut" value="Log Out">
+    </form>
+  </div>
+</header>
+<div id="content">
+  <div class="wrapper"> 
+    <div class="panel right">
+    <h1>Create a Tweet</h1>
+    <p>
+      <form id="newTweet" novalidate>
+        <textarea name="text" my-maxLength="140" class="ribbitText" ng-model="tweet_content"></textarea>
+        <div>{{140 - tweet_content.length}} chars remaining  (min 5 chars)</div>
+        <div ng-hide="uploading">
+              <button id="select-file" class="btn-convert">Select an image (optional)</button>
+              <input id="file-input" type="file" class="file-input" name="files[]">
+          </div>
+          <meter class="progressbar" ng-show="uploading" value="0.0"></meter>
+        <input ng-disabled="tweetIncomplete || !uploadComplete" type="submit" value="Tweet!" ng-click="send_tweet()" ng-enabled="sendTweetButton">
+      </form>
+      <div style="margin-left: 25px;" ng-show="tweetSent" class="alert alert-success" role="alert">Tweet sent !</div>
+      <div style="margin-left: 27px;" ng-show="uploadError" class="alert alert-warning-alt" role="alert" >An error happened: {{errorMessage}}</div>
+    </p>
+  </div>
+
+    <div id="ribbits" class="panel left">
+    	<span class="profile_title">
+        <h1>{{username}}
+          | <a ng-style="styleFeed" ng-click="tab('feed')">Feed</a> 
+          | <a ng-style="styleFollowers" ng-click="tab('followers')">Followers</a> 
+          | <a ng-style="styleFollowing" ng-click="tab('following')">Following</a>
+          <button ng-show="following && !notReady" ng-click="follow()">Unfollow</button>
+          <button ng-hide="following || notReady" ng-click="follow()">Follow</button>
+          <img ng-show="notReady" src="/gfx/loader.gif" alt="loading"/>
+        </h1>
+        </span>
+  	    <div ng-show="feed" ng-repeat="tweet in tweets" class="ribbitWrapper">
+  	    	<img class="avatar" src="/gfx/user2.png">
+  	    	<span class="name">
+            <a ng-click="profile(tweet.username)">
+                {{tweet.username}}
+            </a>
+           </span>
+            <span class="time">{{tweet.display_time}}</span>
+  	    	<p>{{tweet.body}}</p>
+          <img ng-if="tweet.image" alt="tweet image" style="width:300px;" ng-src="{{tweet.image !=null && 'http://s3-us-west-2.amazonaws.com/ingi2145-bvanmelle/img/' + tweet.image }}"/>
+  	    </div>
+        <div ng-show="followTab" ng-repeat="follow in followers" style="height: 50px;" class="ribbitWrapper">
+          <img class="avatar" src="/gfx/user2.png">
+          <span class="name">
+            <a ng-click="profile(follow)">
+              {{follow}}
+            </a>
+          </span>
+        </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="wrapper">
+    A Twitter Clone
+  </div>
+</footer>
