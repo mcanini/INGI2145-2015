@@ -14,7 +14,23 @@ exports.autoLogin = function(user, pass, callback)
 
 exports.manualLogin = function(user, pass, callback)
 {
-    // TUTORIAL: demonstrate this
+    app.db.execute(getUser, [ user ], function(e, result) {
+		if (result.rows.length == 0){
+			callback('user-not-found');
+		}
+		else{
+			var o = result.rows[0];
+			validatePassword(pass, o.pass, function(err, res) {
+				if (res){
+					callback(null, o);
+					app.timelineState = -1;
+				}
+				else {
+					callback('invalid-password');
+				}
+			});
+		}
+	});
 }
 
 /* record insertion, update & deletion methods */

@@ -36,7 +36,25 @@ router.get('/connection', function(req, res) {
 // Login / Logout
 
 router.post('/validate', function(req, res) {
-    // TODO: add code here to validate user password and save the session state
+    if (    req.param('username').length > 20 || req.param('username').length < 4  
+        || !req.param('username').match("^([-_A-z0-9]){3,}$")
+        ||  req.param('pass').length > 20 || req.param('pass').length < 4 ) {
+            res.status(403).send("Informations entered are incompletes !").end();
+    }
+    // attempt manual login & open collection Users
+    AM.manualLogin(req.param('username'), req.param('pass'), function(e, o) {
+        if (!o) {
+            if (e == 'user-not-found')
+                res.status(403).send( "User not found").end();
+            else if (e == 'invalid-password')
+                res.status(403).send( "Password not match").end();
+            else
+                res.status(403).send( "Unexpected Error").end();
+        } else {
+            req.session.user =  o;
+            res.status(200).send().end();
+        }
+    });
 });
 
 router.get('/logout', function(req, res) {
