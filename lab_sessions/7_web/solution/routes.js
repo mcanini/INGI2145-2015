@@ -71,6 +71,29 @@ router.get('/isConnected', function(req, res) {
         res.status(200).send( "false").end();
     }
 });
+////////////////////////////////////////////////////////////////////////////////
+// Subscription
+
+router.post('/validateSubscription', function(req, res) {
+    //Verify informations
+    var username = req.param('username');
+    var fullname = req.param('fullname');
+    var pass = req.param('pass');
+    if (    username.length > 20 || username.length < 4  || !username.match("^([-_A-z0-9]){3,}$")
+        ||  fullname.length > 20 || fullname.length < 4 || !fullname.match("^([- _A-z0-9]){3,}$")
+        ||  pass.length > 20 || pass.length < 4 ) {
+            res.status(403).send("Informations entered are incorrects (well try) !").end();
+    }
+    // attempt registe & open collection Users
+    AM.addNewAccount({'username': username, 'pass': pass, 
+        'fullname': fullname}, function(e, o) {
+            if(e == 'username-taken') {
+                res.status(403).send( "Username already taken").end();
+            } else {
+                res.status(200).send( "Success").end();
+            }
+    });
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 
